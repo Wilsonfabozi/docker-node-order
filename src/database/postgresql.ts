@@ -1,6 +1,6 @@
 import knex from 'knex';
 import * as dotenv from 'dotenv';
-import logger from '../utils/logger';
+import logger from '../log/logger';
 
 dotenv.config();
 
@@ -17,20 +17,20 @@ const postgres = knex({
   },
   // connection: `postgresql://${ENVS.POSTGRES_USERNAME}:${ENVS.POSTGRES_PASSWORD}@${ENVS.POSTGRES_URL}`,
   // searchPath: ['knex', 'public'],${ENVS.MONGO_DB}
-  log: {
-    warn(message) {
-      logger.warn(message)
-    },
-    error(message) {
-      logger.error(message)
-    },
-    deprecate(message) {
-      logger.info(message)
-    },
-    debug(message) {
-      logger.info(message)
-    },
-  }
+  // log: {
+  //   warn(message) {
+  //     logger(message)
+  //   },
+  //   error(message) {
+  //     logger(message)
+  //   },
+  //   deprecate(message) {
+  //     logger(message)
+  //   },
+  //   debug(message) {
+  //     logger(message)
+  //   },
+  // }
 });
 
 
