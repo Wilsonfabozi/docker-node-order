@@ -1,6 +1,8 @@
 import winston, { format } from 'winston';
 import mongodb from '../database/mongodb';
-import Log from './log.model'
+import Log from './log.model';
+
+type LevelType = 'info' | 'warning' | 'error';
 
 const logFormat = format.combine(
   format.timestamp(),
@@ -46,16 +48,16 @@ const logToMongo = async (level: string, message: string, label: string) => {
   await mongodb.close();
 }
 
-const logger = async (level: string, message: string, label: string) => {
-  switch(level){
-    case 'info':
-    case 'warning':
-    case 'error':
-      logToFile.log({level, message, label})
-      break;
-  }
+const logger = async (level: LevelType, message: string, label: string) => {
+  if(label !== 'mongodb-debug' && label !== 'postgresql-debug'){
+    switch(level){
+      case 'info':
+      case 'warning':
+      case 'error':
+        logToFile.log({level, message, label})
+        break;
+    }
 
-  if(label !== 'mongodb-debug'){
     await logToMongo(level, message, label)
   }
 }
