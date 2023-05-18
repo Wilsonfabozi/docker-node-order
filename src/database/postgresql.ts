@@ -8,13 +8,6 @@ const ENVS = process.env;
 
 const postgres = knex({
   client: 'pg',
-  // connection: {
-  //   host: ENVS.POSTGRES_URL,
-  //   port: 5432,
-  //   user: ENVS.POSTGRES_USERNAME,
-  //   password: ENVS.POSTGRES_PASSWORD,
-  //   database: ENVS.POSTGRES_DB
-  // },
   connection: `postgresql://${ENVS.POSTGRES_USERNAME}:${ENVS.POSTGRES_PASSWORD}@${ENVS.POSTGRES_URL}`,
   log: {
     async warn(message) {
