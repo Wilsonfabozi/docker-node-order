@@ -2,7 +2,7 @@ import winston, { format } from 'winston';
 import mongodb from '../database/mongodb';
 import Log from './log.model';
 
-type LevelType = 'info' | 'warning' | 'error';
+type LevelType = 'info' | 'warn' | 'error';
 
 const logFormat = format.combine(
   format.timestamp(),
@@ -52,7 +52,7 @@ const logger = async (level: LevelType, message: string, label: string) => {
   if(label !== 'mongodb-debug' && label !== 'postgresql-debug'){
     switch(level){
       case 'info':
-      case 'warning':
+      case 'warn':
       case 'error':
         logToFile.log({level, message, label})
         break;

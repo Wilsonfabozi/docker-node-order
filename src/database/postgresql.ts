@@ -18,7 +18,7 @@ const postgres = knex({
   connection: `postgresql://${ENVS.POSTGRES_USERNAME}:${ENVS.POSTGRES_PASSWORD}@${ENVS.POSTGRES_URL}`,
   log: {
     async warn(message) {
-      await logger('warning', message, 'postgresql')
+      await logger('warn', message, 'postgresql')
     },
     async error(message) {
       await logger('error', message, 'postgresql')
