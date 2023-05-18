@@ -6,12 +6,14 @@ type LevelType = 'info' | 'warn' | 'error';
 
 const logFormat = format.combine(
   format.timestamp(),
-  winston.format.printf(({ level, message, label, timestamp }) => {
+  winston.format.printf(({
+    level, message, label, timestamp,
+  }) => {
     const hora = `[${new Date(timestamp).toLocaleString('pt-BR')}]`;
 
     return `${hora} [${label}] ${level}: ${message}`;
   })
-)
+);
 
 const logLevels = {
   error: 0,
@@ -20,7 +22,7 @@ const logLevels = {
   http: 3,
   verbose: 4,
   debug: 5,
-  silly: 6
+  silly: 6,
 };
 
 const logToFile = winston.createLogger({
@@ -28,12 +30,15 @@ const logToFile = winston.createLogger({
   format: logFormat,
   transports: [
     new winston.transports.Console(),
-    new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
+    new winston.transports.File({
+      filename: 'logs/error.log',
+      level: 'error',
+    }),
     new winston.transports.File({ filename: 'logs/logs.log' }),
   ],
 });
 
-const logToMongo = async (level: string, message: string, label: string) => {
+const logToMongo = async(level: string, message: string, label: string) => {
   await mongodb.connect();
 
   const newLog = new Log({
@@ -46,21 +51,25 @@ const logToMongo = async (level: string, message: string, label: string) => {
   await newLog.save();
 
   await mongodb.close();
-}
+};
 
-const logger = async (level: LevelType, message: string, label: string) => {
-  if(label !== 'mongodb-debug' && label !== 'postgresql-debug'){
-    switch(level){
+const logger = async(level: LevelType, message: string, label: string) => {
+  if (label !== 'mongodb-debug' && label !== 'postgresql-debug') {
+    switch (level) {
       case 'info':
       case 'warn':
       case 'error':
-        logToFile.log({level, message, label})
+        logToFile.log({
+          level,
+          message,
+          label,
+        });
         break;
+      default:
     }
 
-    await logToMongo(level, message, label)
+    await logToMongo(level, message, label);
   }
-}
-
+};
 
 export default logger;
