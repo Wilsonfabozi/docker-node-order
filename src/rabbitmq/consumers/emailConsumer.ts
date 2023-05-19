@@ -1,7 +1,7 @@
 import { Channel, ConsumeMessage } from 'amqplib';
 import rabbitmq from '../rabbitmq';
-import logger from '../../logger';
-import { labelGenerator } from '../../utils';
+import logger from '../../logger/logger';
+import { labelGenerator } from '../../utils/utils';
 import errorHandler from '../../utils/errorHandler';
 
 const emailConsumerLogic = async(channel: Channel) => async(msg: ConsumeMessage | null): Promise<void> => {

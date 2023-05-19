@@ -1,9 +1,9 @@
 import { Channel, ConsumeMessage } from 'amqplib';
 import rabbitmq from '../rabbitmq';
-import logger from '../../logger';
+import logger from '../../logger/logger';
 import insertOrder from '../../order/order.repository';
 import { getSingleCustomer, insertSingleCustomer } from '../../customer/customer.repository';
-import { labelGenerator } from '../../utils';
+import { labelGenerator } from '../../utils/utils';
 import errorHandler from '../../utils/errorHandler';
 
 const orderConsumerLogic = (channel: Channel) => async(msg: ConsumeMessage | null): Promise<void> => {
@@ -14,17 +14,17 @@ const orderConsumerLogic = (channel: Channel) => async(msg: ConsumeMessage | nul
 
     const orderParams = JSON.parse(msg.content.toString());
 
-    const customer = await getSingleCustomer(orderParams.customer.document, label);
+    const customer = await getSingleCustomer(orderParams.customer.document);
 
     if (customer.length === 0) {
       await logger('info', 'Customer not found in database. Creating new customer', label);
-      await insertSingleCustomer(orderParams.customer, label);
+      await insertSingleCustomer(orderParams.customer);
     } else {
       await logger('info', 'Customer found', label);
     }
 
     await logger('info', 'Creating Order in database', label);
-    await insertOrder(orderParams, label);
+    await insertOrder(orderParams);
 
     channel.ack(msg);
   }

@@ -1,7 +1,7 @@
 import client, { Channel, Connection } from 'amqplib';
 import * as dotenv from 'dotenv';
 import errorHandler from '../utils/errorHandler';
-import logger from '../logger';
+import logger from '../logger/logger';
 
 dotenv.config();
 
