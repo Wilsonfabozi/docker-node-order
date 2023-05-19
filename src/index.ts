@@ -1,54 +1,44 @@
 import express from 'express';
 import cors from 'cors';
-import CODES from './utils/codes';
-import logger from './utils/logger';
-// import authRoutes from './auth/auth.routes';
-// import userRoutes from './user/user.routes';
+// import logger from './logger';
+import setupPostgres from './database/postgresql_setup';
+import orderRoutes from './order/order.routes';
+import orderConsumer from './rabbitmq/consumers/orderConsumer';
+import emailConsumer from './rabbitmq/consumers/emailConsumer';
+import { labelGenerator } from './utils';
 
-// import mongodb from './database/mongodb';
-// import postgres from './databse//postgres';
-// const testDB = async() => {
-//   // await postgres('users')
-//   //   .first()
+const label = labelGenerator();
 
-//   await mongodb.connect()
-//   await mongodb.close()
-// };
+const setup = async() => {
+  await setupPostgres(label);
+  await orderConsumer(label);
+  await emailConsumer(label);
+};
 
-// testDB();
+setup();
 
 const app = express();
 
 app.use(express.json());
-app.use(cors({
-  origin: ['http://localhost:3000', '127.0.0.1'],
-  credentials: true,
-}));
+app.use(cors());
 
-const miliseconds = 1000;
-const segundos = 60;
-const minutos = 2;
-const timeoutTime = miliseconds * segundos * minutos;
+// const miliseconds = 1000;
+// const seconds = 60;
+// const minutes = 2;
+// const timeoutTime = miliseconds * seconds * minutes;
 
-app.use((_req, res, next) => {
-  res.setTimeout(timeoutTime, () => {
-    // logger('error',`Sua requisição excedeu o tempo limite: ${timeoutTime} minutos`);
+// app.use((req, res, next) => {
+//   res.setTimeout(timeoutTime, async() => {
+//     await logger('info', `Timeout: ${req.get('host') + req.originalUrl}"`, label);
 
-    // TODO: arrumar retorno
-    res.status(CODES.TIMEOUT).send({
-      titulo: 'Erro ao completar ação',
-      mensagem: 'Tempo limite excedido',
-    });
-  });
-  next();
-});
+//     res.status(408).send({
+//       message: 'Looks like the server is taking too long to respond, this can be caused by '
+//       + 'either poor connectivity or an error with our servers. Please try again in a while',
+//     });
+//   });
+//   next();
+// });
 
-// app.use('/api', authRoutes);
-// app.use('/api', userRoutes);
+app.use(orderRoutes);
 
-app.use('/', (_req, res) => res.send('Aqui'));
-
-app.listen(8080, () => {
-  logger.info('listening on port 8080', { label: 'system' })
-});
-
+app.listen(8080);
