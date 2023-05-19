@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import logger from '../logger';
+import logger from '../logger/logger';
 import { Product } from '../types';
 import { getSingleProductById } from '../products/products.repository';
 
@@ -52,7 +52,7 @@ const validateDatabase = async(items: Product[], label: string) => {
   let missingProduct = '';
 
   items.forEach(async(product: Product) => {
-    promises.push(getSingleProductById(product.id, label));
+    promises.push(getSingleProductById(product.id));
   });
 
   await Promise.all(promises).then((resultProduct) => {

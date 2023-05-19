@@ -1,25 +1,24 @@
 import postgres from '../database/postgresql';
-// import logger from '../logger';
 import { OrderParams, Product } from '../types';
 
-const insertOrder = async(orderParams: OrderParams, label: string) => {
+const insertOrder = async(orderParams: OrderParams): Promise<void> => {
   const { customer, items, address } = orderParams;
 
-  const resultOrder = await postgres(label)
+  const resultOrder = await postgres
     .insert({ customerDocument: customer.document }, ['orderId'])
     .into('orders');
 
   const { orderId } = resultOrder[0];
 
   items.forEach(async(product: Product) => {
-    await postgres(label)('orderItem').insert({
+    await postgres('orderItem').insert({
       orderId,
       productId: product.id,
       amount: product.amount,
     });
   });
 
-  await postgres(label).insert({
+  await postgres.insert({
     orderId,
     customerDocument: customer.document,
     status: 'created',

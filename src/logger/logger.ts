@@ -1,57 +1,46 @@
-import winston from 'winston';
-import logFormat from './logFormat';
+import { LogLevel } from '../types';
+import {
+  infoLogger,
+  warnLogger,
+  errorLogger,
+  verboseLogger,
+  debugLogger,
+} from './logCreator';
+import logToMongo from './logToMongo';
 
-// const logLevels = {
-//   error: 0,
-//   warn: 1,
-//   info: 2,
-//   http: 3,
-//   verbose: 4,
-//   debug: 5,
-//   silly: 6,
-// };
+export const logger = {
+  log: async(level: LogLevel, message: string, label: string, mongo = false) => {
+    switch (level) {
+      case 'info':
+        infoLogger.log(level, message, { label });
+        break;
+      case 'warn':
+        warnLogger.log(level, message, { label });
+        break;
+      case 'error':
+        errorLogger.log(level, message, { label });
+        break;
+      case 'verbose':
+        verboseLogger.log(level, message, { label });
+        break;
+      case 'debug':
+        debugLogger.log(level, message, { label });
+        break;
+      default:
+        infoLogger.info('logger default case');
+    }
 
-export const infoLogger = winston.createLogger({
-  level: 'info',
-  format: logFormat,
-  transports: [
-    new winston.transports.Console(),
-    new winston.transports.File({ filename: 'logs/logs.log' }),
-  ],
-});
+    const logText = {
+      type: level,
+      message,
+      label,
+      time: new Date(),
+    };
 
-export const warnLogger = winston.createLogger({
-  level: 'warning',
-  format: logFormat,
-  transports: [
-    new winston.transports.Console(),
-    new winston.transports.File({ filename: 'logs/logs.log' }),
-  ],
-});
+    if (!mongo) {
+      await logToMongo(logText, label);
+    }
+  },
+};
 
-export const errorLogger = winston.createLogger({
-  level: 'error',
-  format: logFormat,
-  transports: [
-    new winston.transports.Console(),
-    new winston.transports.File({ filename: 'logs/logs.log' }),
-  ],
-});
-
-export const verboseLogger = winston.createLogger({
-  level: 'verbose',
-  format: logFormat,
-  transports: [
-    new winston.transports.Console(),
-    new winston.transports.File({ filename: 'logs/logs.log' }),
-  ],
-});
-
-export const debugLogger = winston.createLogger({
-  level: 'debug',
-  format: logFormat,
-  transports: [
-    new winston.transports.Console(),
-    new winston.transports.File({ filename: 'logs/logs.log' }),
-  ],
-});
+export default logger.log;

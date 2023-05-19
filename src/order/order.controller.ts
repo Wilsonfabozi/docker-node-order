@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import logger from '../logger';
+import logger from '../logger/logger';
 import validateOrder from './order.valitadions';
 import sendMessage from '../rabbitmq/sendMessage';
-import { labelGenerator } from '../utils';
+import { labelGenerator } from '../utils/utils';
 import errorHandler from '../utils/errorHandler';
 
 const createOrder = async(req: Request, res: Response): Promise<Response> => {
