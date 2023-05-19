@@ -1,28 +1,35 @@
 import knex from 'knex';
 import * as dotenv from 'dotenv';
-import logger from '../log/logger';
+import logger from '../logger';
 
 dotenv.config();
 
 const ENVS = process.env;
 
-const postgres = knex({
-  client: 'pg',
-  connection: `postgresql://${ENVS.POSTGRES_USERNAME}:${ENVS.POSTGRES_PASSWORD}@${ENVS.POSTGRES_URL}`,
-  log: {
-    async warn(message) {
-      await logger('warn', message, 'postgresql');
-    },
-    async error(message) {
-      await logger('error', message, 'postgresql');
-    },
-    async deprecate(message) {
-      await logger('info', message, 'postgresql');
-    },
-    async debug(message) {
-      await logger('info', message, 'postgresql');
-    },
-  },
-});
+// eslint-disable-next-line max-len
+const connectionUrl = `postgresql://${ENVS.POSTGRES_USERNAME}:${ENVS.POSTGRES_PASSWORD}@${ENVS.POSTGRES_URL}/${ENVS.POSTGRES_DB}`;
 
-export default postgres;
+const returnConnection = (label: string) => {
+  const postgres = knex({
+    client: 'pg',
+    connection: connectionUrl,
+    log: {
+      async warn(message) {
+        await logger('warning', message, label);
+      },
+      async error(message) {
+        await logger('error', message, label);
+      },
+      async deprecate(message) {
+        await logger('info', message, label);
+      },
+      async debug(message) {
+        await logger('info', message, label);
+      },
+    },
+  });
+
+  return postgres;
+};
+
+export default returnConnection;
