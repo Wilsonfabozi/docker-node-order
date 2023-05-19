@@ -1,6 +1,6 @@
 import { model, Schema } from 'mongoose';
 
-export interface ILogModel extends Document {
+interface ILogModel extends Document {
   type: number,
   message: string,
   label: string,
