@@ -25,13 +25,9 @@ export type OrderParams = {
   address: Address,
 }
 
-// table.string('productId').unsigned().notNullable();
-// table.string('customerDocument').unsigned().notNullable();
-// table.integer('amount')
-
 export type Queue = 'order' | 'email';
 
-export type LogLevel = 'info' | 'warning' | 'error' | 'verbose' | 'debug';
+export type LogLevel = 'info' | 'warn' | 'error' | 'verbose' | 'debug' | 'unhandled';
 
 export type LogText = {
   type: LogLevel,
