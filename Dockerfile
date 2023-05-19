@@ -1,7 +1,6 @@
 FROM node:16-alpine
 RUN npm install --global nodemon
-WORKDIR /
-COPY . .
+WORKDIR /app
+COPY . /app
 RUN npm i --silent
 CMD ["nodemon", "src/index.ts"]
-EXPOSE 8080
